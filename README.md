@@ -1,8 +1,7 @@
-<h1>📋 Organizational Assistant App</h1>
+It will be ready soon! please wait
+<h1>📋 EAS App</h1>
 
-The Organizational Assistant App is a comprehensive application designed to assist employees in accessing organizational information and managing personal tasks. It provides employees with insights into the organizational structure, their own information, and other features. The app includes an admin panel for CRUD operations on employee data, utilizing an online database (**Supabase**) and offline storage (**Hive**) with seamless syncing capabilities.
 
-In addition, the app offers features like multi-language support, date and weather integration, customizable themes, and a personal to-do list with priority levels and undo functionality. The app uses **Provider** with *ChangeNotifier* to manage language and theme settings, storing preferences in **Hive** for persistence.
 
 <h2>📱 Features</H2>
 
