@@ -13,11 +13,13 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _passwordObscured = true;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -72,13 +74,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 20,
                 ),
                 TextField(
-                  obscureText: true,
+                  obscureText: _passwordObscured,
                   enableSuggestions: false,
                   autocorrect: false,
                   decoration: InputDecoration(
                     label: const Text("Password"),
                     prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: const Icon(Icons.visibility),
+                    suffixIcon: IconButton(icon: Icon(
+                      _passwordObscured
+                      ? Icons.visibility
+                      : Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                            _passwordObscured = !_passwordObscured;
+                        });
+                      },
+                      ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
