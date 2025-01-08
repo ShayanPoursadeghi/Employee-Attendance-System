@@ -1,4 +1,6 @@
+import "package:employee_attendance_app/services/auth_service.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,6 +12,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _passwordObscured = true;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +20,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.redAccent,
-        elevation: 0,
-      ),
+        appBar: AppBar(
+          backgroundColor: Colors.redAccent,
+          elevation: 0,
+        ),
         resizeToAvoidBottomInset: false,
         body: Column(children: [
           Container(
@@ -73,13 +76,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 20,
                 ),
                 TextField(
-                  obscureText: true,
+                  obscureText: _passwordObscured,
                   enableSuggestions: false,
                   autocorrect: false,
                   decoration: InputDecoration(
                     label: const Text("Password"),
                     prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: const Icon(Icons.visibility),
+                    suffixIcon: IconButton(
+                      icon: Icon(_passwordObscured
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          _passwordObscured = !_passwordObscured;
+                        });
+                      },
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -89,22 +101,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                SizedBox(
-                  height: 60,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        )),
-                    child: const Text(
-                      "REGISTER",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                )
+                Consumer<AuthService>(
+                    builder: (context, authServiceProvider, child) {
+                  return SizedBox(
+                    height: 60,
+                    width: double.infinity,
+                    child: authServiceProvider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: () {
+                              authServiceProvider.registerEmployee(
+                                  _emailController.text.trim(),
+                                  _passwordController.text.trim(),
+                                  context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                )),
+                            child: const Text(
+                              "REGISTER",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                          ),
+                  );
+                }),
               ],
             ),
           )

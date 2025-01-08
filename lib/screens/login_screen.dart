@@ -1,7 +1,9 @@
 import "dart:ffi";
 
 import "package:employee_attendance_app/screens/register_screen.dart";
+import "package:employee_attendance_app/services/auth_service.dart";
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,7 +21,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -80,16 +81,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     label: const Text("Password"),
                     prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(icon: Icon(
-                      _passwordObscured
-                      ? Icons.visibility
-                      : Icons.visibility_off),
+                    suffixIcon: IconButton(
+                      icon: Icon(_passwordObscured
+                          ? Icons.visibility
+                          : Icons.visibility_off),
                       onPressed: () {
                         setState(() {
-                            _passwordObscured = !_passwordObscured;
+                          _passwordObscured = !_passwordObscured;
                         });
                       },
-                      ),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -99,22 +100,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-                SizedBox(
-                  height: 60,
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        )),
-                    child: const Text(
-                      "LOGIN",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                ),
+                Consumer<AuthService>(
+                    builder: (Context, authServiceProvider, child) {
+                  return SizedBox(
+                    height: 60,
+                    width: double.infinity,
+                    child: authServiceProvider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: () {
+                              authServiceProvider.loginEmployee(
+                                  _emailController.text.trim(),
+                                  _passwordController.text.trim(),
+                                  context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                )),
+                            child: const Text(
+                              "LOGIN",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                          ),
+                  );
+                }),
                 const SizedBox(
                   height: 12,
                 ),
