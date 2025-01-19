@@ -1,5 +1,10 @@
+import 'package:employee_attendance_app/constants/constants.dart';
+import 'package:employee_attendance_app/models/user_model.dart';
+import 'package:employee_attendance_app/services/db_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -27,13 +32,26 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               style: TextStyle(color: Colors.black54, fontSize: 30),
             ),
           ),
-          Container(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              "Employee Name",
-              style: TextStyle(fontSize: 25),
-            ),
-          ),
+          Consumer<DbService>(builder: (context, dbService, child) {
+            return FutureBuilder(
+                future: dbService.getUserData(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    UserModel user = snapshot.data!;
+                    return Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        user.name != '' ? user.name : "#${user.employeeId}",
+                        style: const TextStyle(fontSize: 25),
+                      ),
+                    );
+                  }
+                  return const SizedBox(
+                    width: 60,
+                    child: LinearProgressIndicator(),
+                  );
+                });
+          }),
           Container(
             alignment: Alignment.centerLeft,
             margin: const EdgeInsets.only(top: 32),
@@ -108,21 +126,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           ),
           Container(
             alignment: Alignment.centerLeft,
-            child: const Text(
-              "15 April 2023",
-              style: TextStyle(fontSize: 20),
+            child: Text(
+              DateFormat("dd MMMM yyy").format(DateTime.now()),
+              style: const TextStyle(fontSize: 20),
             ),
           ),
-          Container(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              "20:00:01 PM",
-              style: TextStyle(fontSize: 15, color: Colors.black54),
-            ),
-          ),
+          StreamBuilder(
+              stream: Stream.periodic(const Duration(seconds: 1)),
+              builder: (context, snapshot) {
+                return Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    DateFormat("hh:mm:ss a").format(DateTime.now()),
+                    style: const TextStyle(fontSize: 15, color: Colors.black54),
+                  ),
+                );
+              }),
           Container(
             margin: const EdgeInsets.only(top: 25),
-            child: Builder(builder: (context){
+            child: Builder(builder: (context) {
               return SlideAction(
                 text: "Slide to check out",
                 textStyle: const TextStyle(
