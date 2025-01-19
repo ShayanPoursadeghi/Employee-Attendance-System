@@ -39,6 +39,8 @@ dependencies:
   flutter_dotenv: ^5.2.1
   provider: ^6.1.2
   font_awesome_flutter: ^10.8.0
+  slide_to_act: ^2.0.2
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
