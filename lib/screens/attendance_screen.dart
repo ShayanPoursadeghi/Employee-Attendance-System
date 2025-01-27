@@ -1,5 +1,6 @@
 import 'package:employee_attendance_app/constants/constants.dart';
 import 'package:employee_attendance_app/models/user_model.dart';
+import 'package:employee_attendance_app/services/attendance_service.dart';
 import 'package:employee_attendance_app/services/db_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,7 +19,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   final GlobalKey<SlideActionState> key = GlobalKey<SlideActionState>();
 
   @override
+  void initState() {
+    Provider.of<AttendanceService>(context, listen: false).getTodayAttendance();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final attendanceService = Provider.of<AttendanceService>(context);
+
     return Scaffold(
         body: SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -73,7 +82,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   )
                 ],
                 borderRadius: BorderRadius.all(Radius.circular(20))),
-            child: const Row(
+            child:  Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -82,20 +91,20 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Check In",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.black54,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 80,
                       child: Divider(),
                     ),
                     Text(
-                      "09:30",
-                      style: TextStyle(fontSize: 25),
+                      attendanceService.attendanceModel?.checkIn ?? '--/--',
+                      style: const TextStyle(fontSize: 25),
                     ),
                   ],
                 )),
@@ -104,20 +113,20 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Check Out",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.black54,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 80,
                       child: Divider(),
                     ),
                     Text(
-                      "--/--",
-                      style: TextStyle(fontSize: 25),
+                      attendanceService.attendanceModel?.checkOut ??'--/--',
+                      style: const TextStyle(fontSize: 25),
                     ),
                   ],
                 )),
@@ -146,7 +155,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             margin: const EdgeInsets.only(top: 25),
             child: Builder(builder: (context) {
               return SlideAction(
-                text: "Slide to check out",
+                text: attendanceService.attendanceModel?.checkIn == null ? "Slide to check in" : "Slide to check out",
                 textStyle: const TextStyle(
                   color: Colors.black54,
                   fontSize: 18,
@@ -154,7 +163,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 outerColor: Colors.white,
                 innerColor: Colors.redAccent,
                 key: key,
-                onSubmit: () {
+                onSubmit: () async{
+                  await attendanceService.markAttendance(context);
                   key.currentState!.reset();
                 },
               );
