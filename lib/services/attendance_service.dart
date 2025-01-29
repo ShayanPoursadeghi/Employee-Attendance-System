@@ -1,5 +1,6 @@
 import 'package:employee_attendance_app/constants/constants.dart';
 import 'package:employee_attendance_app/models/attendance_model.dart';
+import 'package:employee_attendance_app/services/location_service.dart';
 import 'package:employee_attendance_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -42,24 +43,34 @@ class AttendanceService extends ChangeNotifier {
   }
 
   Future markAttendance(BuildContext context) async {
-    if (attendanceModel?.checkIn == null) {
-      await _supabaseClient.from(Constants.attendanceTable).insert({
-        'employee_id': _supabaseClient.auth.currentUser!.id,
-        'date': todayDate,
-        'check_in': DateFormat('HH:mm').format(DateTime.now()),
-      });
-    } else if (attendanceModel?.checkOut == null) {
-      await _supabaseClient
-          .from(Constants.attendanceTable)
-          .update({
-            'check_out': DateFormat('HH:mm').format(DateTime.now()),
-          })
-          .eq('employee_id', _supabaseClient.auth.currentUser!.id)
-          .eq('date', todayDate);
+    Map? getLocation =
+        await LocationService().initializeAndGetLocation(context);
+    if (getLocation != null) {
+      if (attendanceModel?.checkIn == null) {
+        await _supabaseClient.from(Constants.attendanceTable).insert({
+          'employee_id': _supabaseClient.auth.currentUser!.id,
+          'date': todayDate,
+          'check_in': DateFormat('HH:mm').format(DateTime.now()),
+          'check_in_location': getLocation,
+        });
+      } else if (attendanceModel?.checkOut == null) {
+        await _supabaseClient
+            .from(Constants.attendanceTable)
+            .update({
+              'check_out': DateFormat('HH:mm').format(DateTime.now()),
+              'check_out_location': getLocation,
+            })
+            .eq('employee_id', _supabaseClient.auth.currentUser!.id)
+            .eq('date', todayDate);
+      } else {
+        Utils.showSnackBar(context, "You have already checked out today!");
+      }
+      getTodayAttendance();
     } else {
-      Utils.showSnackBar(context, "You have already checked out today!");
+      Utils.showSnackBar(context, "Unable to get your location!",
+          color: Colors.red);
+          getTodayAttendance();
     }
-    getTodayAttendance();
   }
 
   Future<List<AttendanceModel>> getAttendanceHistory() async {
