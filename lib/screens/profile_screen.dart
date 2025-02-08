@@ -1,4 +1,5 @@
 import 'package:employee_attendance_app/models/department_model.dart';
+import 'package:employee_attendance_app/services/auth_service.dart';
 import 'package:employee_attendance_app/services/db_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(top: 80),
+                        margin: const EdgeInsets.only(top: 20),
+                        alignment: Alignment.topRight,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Provider.of<AuthService>(context, listen: false)
+                                .signOut();
+                          },
+                          icon: const Icon(Icons.logout),
+                          label: const Text("Sign Out"),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 20),
                         height: 100,
                         width: 100,
                         decoration: BoxDecoration(
@@ -95,7 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
-                            dbService.updateProfile(nameController.text.trim(), context);
+                            dbService.updateProfile(
+                                nameController.text.trim(), context);
                           },
                           child: const Text(
                             "Update Profile",
