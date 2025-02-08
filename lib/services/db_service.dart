@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:employee_attendance_app/constants/constants.dart';
 import 'package:employee_attendance_app/models/department_model.dart';
 import 'package:employee_attendance_app/models/user_model.dart';
+import 'package:employee_attendance_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -50,6 +51,17 @@ class DbService extends ChangeNotifier {
     allDepartments = result
         .map((department) => DepartmentModel.fromJson(department))
         .toList();
+    notifyListeners();
+  }
+
+  Future updateProfile(String name, BuildContext context) async {
+    await _supabaseClient.from(Constants.employeeTable).update({
+      'name': name,
+      'department': employeeDepartments,
+    }).eq('id', _supabaseClient.auth.currentUser!.id);
+
+    Utils.showSnackBar(context, "Profile Updated Successfully",
+        color: Colors.green);
     notifyListeners();
   }
 }
