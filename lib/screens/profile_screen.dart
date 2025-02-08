@@ -1,3 +1,4 @@
+import 'package:employee_attendance_app/models/department_model.dart';
 import 'package:employee_attendance_app/services/db_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController nameController = TextEditingController();
-  int selectValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +26,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : const Padding(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [],
+            : Padding(
+                padding: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 80),
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.redAccent),
+                        child: const Center(
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text("Employee ID: ${dbService.userModel?.employeeId}"),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      TextField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                            label: Text("Full Name"),
+                            border: OutlineInputBorder()),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      dbService.allDepartments.isEmpty
+                          ? const LinearProgressIndicator()
+                          : SizedBox(
+                              width: double.infinity,
+                              child: DropdownButtonFormField(
+                                decoration: const InputDecoration(
+                                    border: OutlineInputBorder()),
+                                value: dbService.employeeDepartments ??
+                                    dbService.allDepartments.first.id,
+                                items: dbService.allDepartments
+                                    .map((DepartmentModel item) {
+                                  return DropdownMenuItem(
+                                      value: item.id,
+                                      child: Text(
+                                        item.title,
+                                        style: const TextStyle(fontSize: 20),
+                                      ));
+                                }).toList(),
+                                onChanged: (selectedValue) {
+                                  dbService.employeeDepartments = selectedValue;
+                                },
+                              ),
+                            ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      SizedBox(
+                        width: 200,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            dbService.updateProfile(nameController.text.trim(), context);
+                          },
+                          child: const Text(
+                            "Update Profile",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ));
   }
