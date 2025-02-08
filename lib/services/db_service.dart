@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:employee_attendance_app/constants/constants.dart';
+import 'package:employee_attendance_app/models/department_model.dart';
 import 'package:employee_attendance_app/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -7,6 +8,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class DbService extends ChangeNotifier {
   final SupabaseClient _supabaseClient = Supabase.instance.client;
   UserModel? userModel;
+  List<DepartmentModel> allDepartments = [];
+  int? employeeDepartments;
 
   String generatedRandomEmployeeId() {
     final random = Random();
@@ -33,7 +36,20 @@ class DbService extends ChangeNotifier {
         .select()
         .eq('id', _supabaseClient.auth.currentUser!.id)
         .single();
-        userModel = UserModel.fromJson(userData);
-        return userModel!;
+    userModel = UserModel.fromJson(userData);
+
+    employeeDepartments == null
+        ? employeeDepartments = userModel?.department
+        : null;
+    return userModel!;
+  }
+
+  Future<void> getAllDepartments() async {
+    final List result =
+        await _supabaseClient.from(Constants.departmentTable).select();
+    allDepartments = result
+        .map((department) => DepartmentModel.fromJson(department))
+        .toList();
+    notifyListeners();
   }
 }
