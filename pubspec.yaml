@@ -41,8 +41,10 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   slide_to_act: ^2.0.2
   intl: ^0.20.1
-  simple_month_year_picker: ^1.0.5
+  #simple_month_year_picker: ^1.0.5
   location: ^7.0.1
+  simple_month_year_picker:
+    path: packages/SimpleMonthYearPicker
 
 dev_dependencies:
   flutter_test:
