@@ -1,3 +1,8 @@
+/**
+ * Shayan Poursadeghi - 2025-02-09
+ * All right reserved
+ */
+
 import 'package:employee_attendance_app/screens/login_screen.dart';
 import 'package:employee_attendance_app/screens/splash_screen.dart';
 import 'package:employee_attendance_app/services/attendance_service.dart';
