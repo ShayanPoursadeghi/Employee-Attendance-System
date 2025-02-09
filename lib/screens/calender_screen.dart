@@ -38,7 +38,12 @@ class _CalenderScreenState extends State<CalenderScreen> {
                 onPressed: () async {
                   final selectedDate =
                       await SimpleMonthYearPicker.showMonthYearPickerDialog(
-                          context: context, disableFuture: true);
+                          context: context,
+                          disableFuture: true,
+                          height: 225,
+                          width: 350,
+                          selectionColor:
+                              const Color.fromARGB(255, 151, 25, 16));
                   String pickMonth =
                       DateFormat('MMMM yyyy').format(selectedDate);
                   attendanceService.attendanceHistoryMonth = pickMonth;
@@ -60,7 +65,7 @@ class _CalenderScreenState extends State<CalenderScreen> {
                             return Container(
                               margin: const EdgeInsets.only(
                                   top: 12, left: 20, right: 20, bottom: 10),
-                              height: 150,
+                              height: 140,
                               decoration: const BoxDecoration(
                                   color: Colors.white,
                                   boxShadow: [
