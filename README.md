@@ -1,4 +1,4 @@
-Description will be ready soon! please wait
+Description will be ready soon! please wait.
 <h1>📋 EAS App</h1>
 
 
