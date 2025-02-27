@@ -37,6 +37,7 @@ ios/Flutter/Flutter.framework/
 .metadata
 .pubspec.lock
 packages/
+.env
 
 # Symbolication related
 app.*.symbols
